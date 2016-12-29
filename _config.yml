@@ -71,4 +71,4 @@ deploy:
   type: git
   repository:
     github: https://github.com/edison0951/edison0951.github.io.git
-  branch: gh-pages
+  branch: master
