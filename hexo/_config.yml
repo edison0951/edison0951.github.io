@@ -4,7 +4,7 @@
 
 # Site
 title: Riven's blog
-subtitle:发现自己
+subtitle:
 description: 
 author: riven
 language: zh-Hans
@@ -62,10 +62,10 @@ pagination_dir: page
 
 # Extensions
 ## Plugins: https://hexo.io/plugins/
-plugins:
-- hexo-generator-sitemap
-- hexo-generator-archive
-- hexo-generator-tag
+#plugins:
+    #- hexo-generator-sitemap
+    #- hexo-generator-archive
+    #- hexo-generator-tag
 ## Themes: https://hexo.io/themes/
 theme: next
 
@@ -73,6 +73,5 @@ theme: next
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repository:
-    github: https://github.com/edison0951/edison0951.github.io.git
+  repository: https://github.com/edison0951/edison0951.github.io.git
   branch: master
