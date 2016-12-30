@@ -34,7 +34,7 @@ titlecase: false # Transform title into titlecase
 external_link: true # Open external links in new tab
 filename_case: 0
 render_drafts: false
-post_asset_folder: false
+post_asset_folder: true
 relative_link: false
 future: true
 highlight:
@@ -68,10 +68,16 @@ pagination_dir: page
     #- hexo-generator-tag
 ## Themes: https://hexo.io/themes/
 theme: next
-
+duoshuo_shortname: edison0951.duoshuo.com
+auto_excerpt:
+      enable: true
+      length: 150
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git
   repository: https://github.com/edison0951/edison0951.github.io.git
   branch: master
+      
+# Creative Commons 4.0 International License.
+creative_commons: by-nc-sa
