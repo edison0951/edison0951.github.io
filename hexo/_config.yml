@@ -76,7 +76,7 @@ auto_excerpt:
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repository: https://github.com/edison0951/edison0951.github.io.git
+  repository: git@github.com:edison0951/edison0951.github.io.git 
   branch: master
       
 # Creative Commons 4.0 International License.
