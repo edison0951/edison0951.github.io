@@ -1,7 +1,8 @@
 ---
 title: 通过代码获取LaunchImage
-date: 2017-01-11 09:50:00
-tags: LaunchImage 启动图
+date: 2017-02-15 09:50:00
+tags: [LaunchImage, 启动图]
+categories: iOS
 ---
 
 相信大多数开发者都会遇到这样一个需求：在AppDelegate的
@@ -54,4 +55,5 @@ UILaunchImageSize = "{320, 568}";
 通过以上代码，你就能根据你当前屏幕的分辨率获取对应的启动图了。
 
 多说一句，你还可以手动设置这些key的名字，具体请看这个[链接](http://stackoverflow.com/questions/18976412/launch-screens-supporting-ios6-and-ios7-forced-to-splash-screen)。
+
 
