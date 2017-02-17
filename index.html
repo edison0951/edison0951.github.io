@@ -535,7 +535,49 @@
       
         
           
-            
+            <p>每次Xcode升级，都需要修改我们的自动打包脚本，这确实很头大。正好笔者也遇到了这个问题，下面就来仔细讲一下Xcode7和Xcode8之间自动编译并打包的差异。</p>
+<h4 id="Xcode7"><a href="#Xcode7" class="headerlink" title="Xcode7"></a>Xcode7</h4><h5 id="代码编译并归档"><a href="#代码编译并归档" class="headerlink" title="代码编译并归档"></a>代码编译并归档</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">xcodebuild -workspace <span class="string">"$&#123;SCHEME_NAME&#125;.xcworkspace"</span> -scheme <span class="string">"$&#123;SCHEME_NAME&#125;"</span></div><div class="line"></div><div class="line">-sdk iphoneos -configuration <span class="string">"$&#123;BUILD_CONFIGURATION&#125;"</span> build CODE_SIGN_IDENTITY=<span class="string">"$&#123;IDENTITY_NAME&#125;"</span></div><div class="line"></div><div class="line">PROVISIONING_PROFILE=<span class="string">"$&#123;PROVISIONING_PROFILE&#125;"</span> SYMROOT=$&#123;BUILD_PATH&#125;</div></pre></td></tr></table></figure>
+<p>变量说明：</p>
+<p>SCHEME_NAME：scheme名称</p>
+<p>BUILD_CONFIGURATION：构建配置（比如inhouse/release/enterprise）</p>
+<p>IDENTITY_NAME：证书的文件名（在keychain中可以获取到对应的文件名）</p>
+<p>PROVISIONING_PROFILE：授权文件对应的文件名称（形式如：49cac5ce-3c77-472b-9abb-7c463a8bea92）</p>
+<p>BUILD_PATH：编译之后存放的目录</p>
+<h5 id="归档文件导出"><a href="#归档文件导出" class="headerlink" title="归档文件导出"></a>归档文件导出</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">xcrun -sdk <span class="string">"$&#123;TARGET_SDK&#125;"</span> -v PackageApplication <span class="string">"$&#123;PROJECT_BUILDDIR&#125;/$&#123;SCHEME_NAME&#125;.app"</span> -o <span class="string">"$&#123;BUILD_OUTPUT_DIR&#125;/$&#123;APP_NAME&#125;.ipa"</span></div></pre></td></tr></table></figure>
+<p>变量说明：</p>
+<p>TARGET_SDK：iphoneos（sdk版本，会根据系统当前sdk自动选择）</p>
+<p>SCHEME_NAME：scheme名称</p>
+<p>PROJECT_BUILDDIR：编译的目录</p>
+<p>BUILD_OUTPUT_DIR：打包后的输出目录</p>
+<p>APP_NAME：文件名称</p>
+<hr>
+<h4 id="Xcode8"><a href="#Xcode8" class="headerlink" title="Xcode8"></a>Xcode8</h4><p>代码编译并归档</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">xcodebuild -scheme <span class="string">"$&#123;SCHEME_NAME&#125;"</span> -sdk <span class="string">"$&#123;TARGET_SDK&#125;"</span></div><div class="line"></div><div class="line">-archivePath <span class="string">"$&#123;PROJECT_BUILDDIR&#125; $&#123;SCHEME_NAME&#125;.xcarchive"</span></div><div class="line"></div><div class="line">-configuration Release PROVISIONING_PROFILE=<span class="string">"$&#123;PROVISIONING_PROFILE&#125;"</span> archive</div></pre></td></tr></table></figure>
+<p>变量说明：</p>
+<p>TARGET_SDK：iphoneos（sdk版本，会根据系统当前sdk自动选择）</p>
+<p>SCHEME_NAME：scheme名称</p>
+<p>PROJECT_BUILDDIR：编译的目录</p>
+<p>PROVISIONING_PROFILE：授权文件对应的文件名称（形式如：49cac5ce-3c77-472b-9abb-7c463a8bea92）</p>
+<h5 id="归档文件导出-1"><a href="#归档文件导出-1" class="headerlink" title="归档文件导出"></a>归档文件导出</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">xcodebuild -exportArchive -archivePath <span class="string">"$&#123;PROJECT_BUILDDIR&#125;/$&#123;SCHEME_NAME&#125;.xcarchive"</span></div><div class="line"></div><div class="line">-exportOptionsPlist<span class="string">"$&#123;EXPORT_PLIST&#125;"</span> -exportPath <span class="string">"$&#123;BUILD_OUTPUT_DIR&#125;"</span></div></pre></td></tr></table></figure>
+<p>变量说明：</p>
+<p>SCHEME_NAME：scheme名称</p>
+<p>PROJECT_BUILDDIR：编译的目录</p>
+<p>EXPORT_PLIST：plist文件路径（导出相关信息的配置）</p>
+<p>BUILD_OUTPUT_DIR：ipa最终的导出目录</p>
+<h5 id="Plist格式"><a href="#Plist格式" class="headerlink" title="Plist格式"></a>Plist格式</h5><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</div><div class="line"><span class="meta">&lt;!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">plist</span> <span class="attr">version</span>=<span class="string">"1.0"</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">dict</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">key</span>&gt;</span>method<span class="tag">&lt;/<span class="name">key</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">string</span>&gt;</span>ad-hoc<span class="tag">&lt;/<span class="name">string</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">key</span>&gt;</span>teamID<span class="tag">&lt;/<span class="name">key</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">string</span>&gt;</span>xxxxxxx<span class="tag">&lt;/<span class="name">string</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dict</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">plist</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>依次按照上面的步骤，写完编译脚本，感觉目标就要完成了。但是Xcode8的问题才刚刚开始</p>
+<ol>
+<li><p>Xcode8多了一个Automatically manage signing（自动管理签名）</p>
+<p>解决：需要将自动管理替换为手动管理</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sed -i &apos;&apos; &apos;s/ProvisioningStyle = Automatic;/ProvisioningStyle = Manual;/g&apos; $&#123;PROJECT_DIR&#125;/project.pbxproj&quot;</div></pre></td></tr></table></figure>
+</li>
+<li><p>改成手动管理后，由于我们的企业版和App Store的版的bundle id和开发者Team完全不一样</p>
+<p>解决：通过脚本修改Bundle ID，然后将工程中的Developer 替换为Distribution</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">//替换bundle id</div><div class="line"></div><div class="line">sed -i &apos;&apos; &apos;s/$&#123;OLD_BUNDLE_ID&#125;/$&#123;NEW_BUNDLE_ID&#125;/g&apos; $&#123;PROJECT_DIR&#125;/project.pbxproj</div><div class="line"></div><div class="line">//替换打包类型</div><div class="line"></div><div class="line">sed -i &apos;&apos; &apos;s/iPhone Developer/iPhone Distribution/g&apos; $&#123;PROJECT_DIR&#125;/project.pbxproj</div></pre></td></tr></table></figure>
+<p>最终的编译脚本已经放到了<a href="https://github.com/edison0951/python_automate" target="_blank" rel="external">github</a>，感兴趣的朋友可以自行下载查看</p>
+</li>
+</ol>
+
           
         
       
